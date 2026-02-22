@@ -1,0 +1,40 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-color: #FBFBFB;
+}
+
+.navbar,
+footer {
+    background-color:#130c1d;
+}
+
+#logo, .navbar-brand {
+    font-family: 'Chicle', sans-serif;
+    font-size: 1.8rem;
+    color: #ff8208;
+}
+.navbar-brand:hover{
+    color: #c96c10;
+}
+.carousel-item img {
+    height: 30em;
+    width: 20em;
+    object-fit: cover;
+}
+
+.carousel-caption {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 1em;
+}
+.nav-link{
+    color:#FBFBFB;
+}
+.nav-link:hover{
+    font-weight: bold;
+    color:antiquewhite;
+}

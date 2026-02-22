@@ -1,0 +1,41 @@
+{% extends "adminbase.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="heading top">
+        <h1>Registered Users</h1>
+    </div>
+    <div class="table-area">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered border-light-subtle table align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username (E-mail)</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Pincode</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    {% if Users %}
+                    {% for user in Users %}
+                    <tr>
+                        <td>{{user.id}}</td>
+                        <td>{{user.username}}</td>
+                        <td>{{user.name}}</td>
+                        <td>{{user.address}}</td>
+                        <td>{{user.pincode}}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">🚫 User's haven't registered yet !</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

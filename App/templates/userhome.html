@@ -1,0 +1,123 @@
+{% extends "userbase.html" %}
+{% block content %}
+<div class="container-fluid">
+    {% if active_booking %}
+    <div class="active">
+        <div class="card " style="width: 25rem;">
+            <div class="card-body text-center">
+                <h2 class="heading" >Active Booking</h2>
+                <p><b>Spot ID : </b>{{active_booking.spot.id}}</p>
+                <p><b>Location : </b>{{active_booking.spot.lot.prime_location_name}}</p>
+                <p><b>Vehicle No. : </b>{{active_booking.vehicle_no}}</p>
+                <p><b>Booked at ⏱️ : </b>{{active_booking.parking_time.strftime('%d %B %Y, %I:%M %p')}}</p>
+                {% if duration %}
+                <p><b>Duration : </b>{{duration}}</p>
+                <p><b>Cost : </b>₹{{cost}}</p>
+                <a class="btn btn-dark"
+                    href="{{url_for('user.released_spot', id=active_booking.id, now=now)}}">confirm</a>
+                {% else %}
+                <a class="btn btn-dark" href="{{url_for('user.release_spot', id=active_booking.id)}}">Release</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="heading mt-5">
+        <h2>🔍Search Parking Lot</h2>
+        <form action="{{url_for('user.search')}}" , method="get">
+            <input class="input" type="text" name="q" placeholder="Search Parking at any location or pincode"
+                value="{{query or ''}}"></input>
+            <input class="search btn btn-warning text" type="submit" value="Search">
+        </form>
+    </div>
+    <div class="table-area mt-3">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered border-light-subtle table align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Address</th>
+                        <th>Availability</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    {% if ParkingLot %}
+                    {% for lot in ParkingLot %}
+                    {% set Parkingspot=ParkingSpot[lot.id] %}
+                    {% if Parkingspot | length > 0 %}
+                    {% set spot=Parkingspot[0] %}
+                    <tr>
+                        <td>{{lot.id}}</td>
+                        <td>{{lot.address}}</td>
+                        <td>{{Parkingspot| length}}</td>
+                        <td> <button type="button" class="btn btn-dark" data-bs-toggle="modal"
+                                data-bs-target="#Book_spot{{spot.id}}">
+                                Book
+                            </button>
+                            <div class="modal fade" id="Book_spot{{spot.id}}" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Book the Parking Spot
+                                            </h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="POST" action="{{url_for('user.book_spot')}}">
+                                                <div class="mb-3">
+                                                    <label for="spot_id" class="form-label">Spot ID</label>
+                                                    <input type="text" name="spot_id" class="form-control" id="spot_id"
+                                                        value="{{spot.id}}" readonly>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="lot_id" class="form-label">Lot ID</label>
+                                                    <input type="text" name="lot_id" class="form-control"
+                                                        value="{{lot.id}}" id="pincode" readonly>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="user_id" class="form-label">User ID</label>
+                                                    <input type="text" name="user_id" class="form-control"
+                                                        value="{{User.id}}" id="pincode" readonly>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="price" class="form-label">Price(per hour)</label>
+                                                    <input type="float" name="price" class="form-control"
+                                                        value="{{lot.price}}" id="price" readonly>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="vehicle_no" class="form-label">Vehicle Number</label>
+                                                    <input type="text" name="vehicle_no" class="form-control"
+                                                        id="vehicle_no" required>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Reserve</button>
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">🚫 No spots available in {{lot.address}}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">🚫 No Lot available in {{query or ''}}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

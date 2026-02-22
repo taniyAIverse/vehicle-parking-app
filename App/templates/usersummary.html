@@ -1,0 +1,100 @@
+{% extends "userbase.html" %}
+{% block content %}
+<div flex-grow-1 >
+    <h2 class="heading mt-4 pb-2">Parking History</h2>
+    <div class="table-area " style="height: 30vh; border-radius: 2px;">
+        <div class="table-responsive ">
+            <table class="table table-hover table-bordered border-light-subtle table align-middle">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Spot-ID</th>
+                        <th>Location</th>
+                        <th>Vehicle_no.</th>
+                        <th>Duration</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    {% if reservations %}
+                    {% for reservation in reservations %}
+                    <tr>
+                        <td>{{reservation.parking_time.strftime('%d %B %Y')}}</td>
+                        <td>{{reservation.spot_id}}</td>
+                        <td>{{reservation.spot.lot.prime_location_name}}</td>
+                        <td>{{reservation.vehicle_no}}</td>
+                        {% if reservation.leaving_time and reservation.parking_time %}
+                        {% set time = reservation.leaving_time - reservation.parking_time %}
+                        {% set hours= time.total_seconds()//3600 | int %}
+                        {% set minutes= (time.total_seconds()%3600)//60 | int %}
+                        {% if hours > 0 and minutes > 0 %}
+                        {% set duration = hours ~ ' hr ' ~ minutes ~ ' min' %}
+                        {% elif hours > 0 %}
+                        {% set duration = hours ~ ' hr' %}
+                        {% else %}
+                        {% set duration = minutes ~ ' min' %}
+                        {% endif %}
+                        <td>{{duration}}</td>
+                        {% else %}
+                        <td>Booking not completed yet.</td>
+                        {% endif %}
+
+                        <td>₹ {{reservation.cost}}</td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">Currently, there are no reservations associated with your account.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <h3 class="heading mt-5 ">Total Amount Spent per Lot</h3>
+    <div class="chart-wrapper">
+        <div class="chart">
+            <canvas id="CostperLotChart"></canvas>
+        </div>
+    </div>
+    <script>
+        const labels = {{ labels| tojson }};
+        const data = {{ cost| tojson }};
+
+        const ctx = document.getElementById('CostperLotChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Cost (₹)',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Cost (₹)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Lots'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</div>
+{% endblock %}

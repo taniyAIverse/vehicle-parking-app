@@ -1,0 +1,167 @@
+{% extends "adminbase.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="heading top">
+        <h1>Available Parking Lots</h1>
+    </div>
+    <div class="table-area">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered border-light-subtle table align-middle">
+                <thead>
+                    <tr>
+                        <th>Parking-Lot ID</th>
+                        <th>Prime Location</th>
+                        <th>Address</th>
+                        <th>Price</th>
+                        <th>View Spot</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    {% if ParkingLot %}
+                    {% for lot in ParkingLot %}
+                    <tr>
+                        <td>{{lot.id}}</td>
+                        <td>{{lot.prime_location_name}}</td>
+                        <td>{{lot.address}}</td>
+                        <td>{{lot.price}}</td>
+                        <td><a href="{{url_for('admin.view_spot',id=lot['id'])}}">Spots</a></td>
+                        <td><button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#edit_lot{{lot['id']}}">
+                                Edit
+                            </button>
+
+                            <div class="modal fade" id="edit_lot{{lot['id']}}" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Parking Lot</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="POST" action="{{url_for('admin.edit_lot', id=lot['id'])}}">
+                                                <div class="mb-3">
+                                                    <label for="location" class="form-label">Prime Location Name</label>
+                                                    <input type="text" name="prime_location_name" class="form-control"
+                                                        id="location" value="{{lot['prime_location_name']}}">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="address" class="form-label">Address</label>
+                                                    <textarea name="address" class="form-control" id="address"
+                                                        rows="3">{{lot['address']}}</textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="pincode" class="form-label">Pincode</label>
+                                                    <input type="number" name="pincode" class="form-control"
+                                                        value="{{lot['pincode']}}" id="pincode">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="price" class="form-label">Price(per hour)</label>
+                                                    <input type="number" name="price" class="form-control"
+                                                        value="{{lot['price']}}" id="price">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="max_spots" class="form-label">Maximum Spots</label>
+                                                    <input type="number" name="max_spots" class="form-control"
+                                                        value="{{lot['max_spots']}}" id="max_spots">
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Edit</button>
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                data-bs-target="#delete_lot_{{lot['id']}}">
+                                Delete
+                            </button>
+
+                            <div class="modal fade" id="delete_lot_{{lot['id']}}" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Parking Lot
+                                            </h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="POST" action="{{url_for('admin.delete_lot', id=lot['id'])}}">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Do you want to delete this lot({{lot.id}})
+                                                        ?</label>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Delete</button>
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">🚫 Lots not Available. Add new Lot !</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="addlot">
+        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#add_lot">
+            + Add Lot
+        </button>
+
+        <div class="modal fade" id="add_lot" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">New Parking Lot</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{{url_for('admin.add_lot')}}">
+                            <div class="mb-3">
+                                <label for="location" class="form-label">Prime Location Name</label>
+                                <input type="text" name="prime_location_name" class="form-control" id="location"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <textarea name="address" class="form-control" id="address" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="pincode" class="form-label">Pincode</label>
+                                <input type="number" name="pincode" class="form-control" id="pincode" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Price(per hour)</label>
+                                <input type="number" name="price" class="form-control" id="price" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="max_spots" class="form-label">Maximum Spots</label>
+                                <input type="number" name="max_spots" class="form-control" id="max_spots" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

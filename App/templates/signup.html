@@ -1,0 +1,42 @@
+{% extends "template.html" %}
+{% block body %}
+<div class="container box ">
+    <div class="heading">
+        <h1>Sign Up</h1>
+    </div>
+    <form method="POST" action="{{url_for('main.signup')}}">
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input placeholder="Enter your email" type="email" class="form-control" id="username" name="username"
+                aria-describedby="emailHelp" required>
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input name="name" type="text" class="form-control" id="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <input name="address" type="text" class="form-control" id="address" required>
+        </div>
+        <div class="mb-3">
+            <label for="pincode" class="form-label">Pincode</label>
+            <input name="pincode" type="number" class="form-control" id="pincode" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input name="password" type="password" class="form-control" id="password" minlength="8" required>
+        </div>
+        <div class="mb-3">
+            <label for="Confirm-password" class="form-label">Confirm-Password</label>
+            <input name="Confirm-password" type="password" class="form-control" id="Confirm-password" minlength="8"
+                required>
+        </div>
+        <div class="mb-3 d-flex justify-content-center">
+            <p class="mt-1 mb-1">Already have an account? <a href="{{url_for('main.signin')}}" style="text-decoration: none;color:blue;">Sign in</a>
+            </p>
+        </div >
+        <div class="d-flex justify-content-center">
+        <button type="submit" class="btn signbtn ">Submit</button></div>
+    </form>
+</div>
+{% endblock %}

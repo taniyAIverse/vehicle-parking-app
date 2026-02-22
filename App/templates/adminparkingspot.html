@@ -1,0 +1,82 @@
+{% extends "adminbase.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class=" spotcontent">
+        <div class="heading d-flex flex-column gap-3 align-items-center mt-4">
+            <h2>Parking Spots</h2>
+            <h1>Location: <u class="text text-danger">{{Parkinglot.prime_location_name}}</u></h1>
+            <h4>Occupied-Spot: {{ParkingSpot | selectattr("status", "equalto", "O") | list | length}}/{{ParkingSpot|length}}
+            </h4>
+        </div>
+
+        <div class="grid">
+            {% for spot in ParkingSpot %}
+            {% if spot.status == "O" %}
+            {% set reservedspot= reserved[spot.id] %}
+            {% set time = ((now-reservedspot.parking_time).total_seconds())/3600 %}
+            {% set price= Parkinglot.price | float %}
+            {% set cost= time* price %}
+            <div class="card occupied">
+                <div class="card-body ">
+                    <p class="card-text"><b>Spot-ID :</b> {{spot.id}}</p>
+                    <p class="card-text"><b>Status :</b> Occupied</p>
+                </div>
+                <img src="{{url_for('static',filename='images/carpark.png')}}" class="card-img-top img-fluid" alt="carpark">
+                <button type="button" class=" button btn btn-warning " data-bs-toggle="modal"
+                    data-bs-target="#spot_detail{{spot.id}}">
+                    <p class="mb-0 text-center" >View Details</p>
+                </button>
+            </div>
+            <div class="modal fade" id="spot_detail{{spot.id}}" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Occupied Parking Spot Details</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="occ_spot_id" class="form-label">ID</label>
+                                    <input class="form-control" id="occ_spot_id" value="{{spot['id']}}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="customer_id" class="form-label">Customer ID</label>
+                                    <input class="form-control" id="customer_id" value="{{reservedspot.user_id}}"
+                                        readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="vehicle_no" class="form-label">Vehicle Number</label>
+                                    <input class="form-control" id="vehicle_no" value="{{reservedspot.vehicle_no}}"
+                                        readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="Date-time" class="form-label">Date/time of parking</label>
+                                    <input class="form-control" id="Date-time"
+                                        value="{{reservedspot.parking_time.strftime('%d %B %Y, %I:%M %p')}}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cost" class="form-label">Est. parking cost</label>
+                                    <input class="form-control" id="cost" value="₹{{cost | round(2)}}" readonly>
+                                </div>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card available">
+                <div class="card-body text-center ">
+                    <p class="card-text"><b>Spot-ID :</b> {{spot.id}}</p>
+                    <p class="card-text"><b>Status</b> : Available</p>
+                </div>
+                <img src="{{url_for('static',filename='images/available.png')}}" class="card-img-top pb-4"lt="carpark">
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
