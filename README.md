@@ -75,4 +75,4 @@ python run.py
 
 ## 📬 Contact
 For any issues or contributions, reach out at:  
-📧 **24f1000503@ds.study.iitm.ac.in**
+📧 **taniyap241@gmail.com**
